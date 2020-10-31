@@ -1,14 +1,26 @@
 import discord
 from discord.ext import commands
 #import logging // COMING SOON
+import random
+import asyncio
+import os
 
 
-client = commands.Bot(command_prefix = "-", help_command=None)
+client = commands.Bot(command_prefix = "-")
 #logging.basicConfig(level=logging.INFO)
 
 
+@client.command()
+async def load(ctx, extension):
+    client.load_extension(f"cogs.{extension}")
+
+@client.command()
+async def unload(ctx, extension):
+    client.unload_extension(f"cogs.{extension}")
+
 @client.event
 async def on_ready():
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="over the Game Jam! | gj!help"))
     print("Hyphen is online and active.")
 
 @client.event
@@ -17,42 +29,22 @@ async def on_command_error(ctx, error):
         embed = discord.Embed(title="Error!", description="Oops, it seems an error occurred! \n According to what my developer told me, you forgot to add a required argument, check the help command to see what you did wrong. \n If all else fails join the [Official Support Server](https://discord.gg/KCZ36rS9g6) and someone will help you! \n Error 422 - Unprocessable Input (commands.MissingRequiredArgument).", color=0xf5141b)
         await ctx.send(embed=embed)
 
-@client.command()
-async def echo(ctx, *, message=None):
-    message = message or "Please provide the message to be echoed!"
-    await ctx.message.delete()
-    await ctx.send(message)
+async def ch_pr():
+    await client.wait_until_ready()
 
-@client.command()
-async def kick(ctx, member : discord.Member, *, reason=None):
-    embed = discord.Embed(title="User Kicked!", description=(f"User : {member.mention}, was kicked by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
-    await ctx.send(embed=embed)
-    await member.kick(reason=reason)
+    statuses = ["my developer developing me!", f"over {len(client.guilds)} servers! | -help", "everyone... spoooooky!"]
 
-@client.command()
-async def ban(ctx, member : discord.Member, *, reason="No reason was provided"):
-    embed = discord.Embed(title="User Banned!", description=(f"User : {member.mention}, was banned by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
-    await ctx.send(embed=embed)
-    await member.ban(reason=reason)
+    while not client.is_closed():
 
-@client.command()
-async def unban(ctx, *, member):
-    bannedUsers = await ctx.guild.bans()
-    memberName, memberDiscriminator = member.split("#")
+        status = random.choice(statuses)
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
 
-    for banEntry in bannedUsers:
-        user = banEntry.user
+        await asyncio.sleep(15)
 
-        if (user.name, user.discriminator) == (user.name, user.discriminator):
-            embed = discord.Embed(title="User Unbanned!", description=(f"User : {member}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
-            await ctx.send(embed=embed)
-            await ctx.guild.unban(user)
+client.loop.create_task(ch_pr())
 
-@client.command()
-async def clear(ctx, amount : int):
-    await ctx.channel.purge(limit=amount)
-    embed = discord.Embed(title="Purged Message(s)!",  description=(f"Purged {amount} message(s)!"))
-    await ctx.send(embed=embed)
-    await ctx.message.delete()
+for filename in os.listdir("./cogs"):
+    if filename.endswith(".py"):
+        client.load_extension(f"cogs.{filename[:-3]}")
 
 client.run("NzQ1NjIyMTQyNjU3MzY0MDQw.Xz0cuw.PUkr0_srpyc_ymZ8P-t0WJEwA3c")
