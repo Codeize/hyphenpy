@@ -10,7 +10,7 @@ class Misc(commands.Cog):
     async def on_ready(self):
         print("Misc is successfully loaded.")
 
-    @client.command()
+    @commands.command()
     async def echo(self, ctx, *, message=None):
         message = message or "Please provide the message to be echoed!"
         await ctx.message.delete()

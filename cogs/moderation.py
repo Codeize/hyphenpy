@@ -10,19 +10,19 @@ class Moderation(commands.Cog):
     async def on_ready(self):
         print("Moderation is successfully loaded.")
 
-    @client.command()
+    @commands.command()
     async def kick(self, ctx, member : discord.Member, *, reason="No reason was provided"):
         embed = discord.Embed(title="User Kicked!", description=(f"User : {member.mention}, was kicked by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
         await ctx.send(embed=embed)
         await member.kick(reason=reason)
 
-    @client.command()
+    @commands.command()
     async def ban(self, ctx, member : discord.Member, *, reason="No reason was provided"):
         embed = discord.Embed(title="User Banned!", description=(f"User : {member.mention}, was banned by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
         await ctx.send(embed=embed)
         await member.ban(reason=reason)
 
-    @client.command()
+    @commands.command()
     async def unban(self, ctx, *, member):
         bannedUsers = await ctx.guild.bans()
         memberName, memberDiscriminator = member.split("#")
@@ -35,7 +35,7 @@ class Moderation(commands.Cog):
                 await ctx.send(embed=embed)
                 await ctx.guild.unban(user)
 
-    @client.command()
+    @commands.command()
     async def clear(self, ctx, amount : int):
         await ctx.channel.purge(limit=amount)
         embed = discord.Embed(title="Purged Message(s)!",  description=(f"Purged {amount} message(s)!"), color=0x31e30e)
