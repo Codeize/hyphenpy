@@ -30,7 +30,7 @@ async def on_command_error(ctx, error):
 async def ch_pr():
     await client.wait_until_ready()
 
-    statuses = ["my developer developing me!", f"over {len(client.guilds)} servers for FREE! | -help", "everyone... spoooky!"]
+    statuses = ["my developer developing me!", f"over {len(client.guilds)} servers for FREE! | -help", "Netflix and vibing to music!"]
 
     while not client.is_closed():
 
