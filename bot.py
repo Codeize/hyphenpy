@@ -3,11 +3,14 @@ from discord.ext import commands
 import random
 import asyncio
 import os
+import json
 
 # error color = ff0000
 # successful color = 31e30e
 
-client = commands.Bot(command_prefix = "-")
+client = commands.Bot(command_prefix = "-", case_insensitive=True, owner_id=668423998777982997)
+
+client.blacklistedUsers = []
 
 @client.command()
 async def load(ctx, extension):
@@ -26,6 +29,19 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(title="Error!", description="Oops, it seems an error occurred! \n According to what my developer told me, you forgot to add a required argument, check the help command to see what you did wrong. \n If all else fails join the [Official Support Server](https://discord.gg/KCZ36rS9g6) and someone will help you! \n Error 422 - Unprocessable Input (commands.MissingRequiredArgument).", color=0xff0000)
         await ctx.send(embed=embed)
+
+@client.event
+async def on_message(message):
+    if message.author.id == client.user.id:
+        return
+
+    if message.author.id in client.blacklistedUsers:
+        return
+
+    if message.content.lower().startswith("help"):
+        await message.channel.send("Hey! Why don't you run the help command with `-help` to see what I can do!")
+
+    await client.process_commands(message)
 
 async def ch_pr():
     await client.wait_until_ready()

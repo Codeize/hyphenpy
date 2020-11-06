@@ -37,7 +37,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     async def clear(self, ctx, amount : int):
-        await ctx.channel.purge(limit=amount)
+        await ctx.channel.purge(limit=amount+1)
         embed = discord.Embed(title="Purged Message(s)!",  description=(f"Purged {amount} message(s)!"), color=0x31e30e)
         await ctx.send(embed=embed)
         await ctx.message.delete()
