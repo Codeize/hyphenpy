@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from pathlib import Path
 import random
 import asyncio
 import os
@@ -8,9 +9,14 @@ import json
 # error color = ff0000
 # successful color = 31e30e
 
+cwd = Path(__file__).parents[0]
+cwd = str(cwd)
+print(f"{cwd}\n-----")
+
 client = commands.Bot(command_prefix = "-", case_insensitive=True, owner_id=668423998777982997)
 
-client.blacklistedUsers = []
+client.blacklisted_users = []
+client.cwd = cwd
 
 @client.command()
 async def load(ctx, extension):
@@ -22,7 +28,10 @@ async def unload(ctx, extension):
 
 @client.event
 async def on_ready():
-    print("Hyphen is online and active.")
+    print("Hyphen is online and active.\n-----")
+    print('Servers connected to:')
+    for guild in client.guilds:
+        print(guild.name + "\n-----")
 
 @client.event
 async def on_command_error(ctx, error):
@@ -35,7 +44,7 @@ async def on_message(message):
     if message.author.id == client.user.id:
         return
 
-    if message.author.id in client.blacklistedUsers:
+    if message.author.id in client.blacklisted_users:
         return
 
     if message.content.lower().startswith("help"):
@@ -57,8 +66,11 @@ async def ch_pr():
 
 client.loop.create_task(ch_pr())
 
-for filename in os.listdir("./cogs"):
-    if filename.endswith(".py"):
-        client.load_extension(f"cogs.{filename[:-3]}")
+if __name__ == '__main__':
+    # When running this file, if it is the 'main' file
+    # I.E its not being imported from another python file run this
+    for file in os.listdir(cwd+"/cogs"):
+        if file.endswith(".py") and not file.startswith("_"):
+            client.load_extension(f"cogs.{file[:-3]}")
 
 client.run("NzQ1NjIyMTQyNjU3MzY0MDQw.Xz0cuw.PUkr0_srpyc_ymZ8P-t0WJEwA3c")

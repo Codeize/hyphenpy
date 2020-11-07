@@ -1,6 +1,9 @@
 import discord
 import time
 from discord.ext import commands
+import json
+
+import cogs._json
 
 class Util(commands.Cog):
 
@@ -9,7 +12,7 @@ class Util(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Utils is successfully loaded.")
+        print(f"{self.__class__.__name__} has been loaded\n-----")
 
     @commands.command()
     async def ping(self, ctx):
@@ -19,7 +22,7 @@ class Util(commands.Cog):
     @commands.command()
     async def updates(self, ctx):
         embed = discord.Embed(title="Hyphen Updates!", color=0x12e612)
-        embed.add_field(name="Under Development :", value="Permission Checks, Logging, More Moderation Commands.")
+        embed.add_field(name="Under Development :", value="Permission Checks, Logging, More Moderation Commands. Reason for shutdown cmd")
         embed.add_field(name="Coming Soon :", value="Music, Economy.")
 
         embed.set_footer(text=f"Developed By Codeize#0001  | {self.client.user.name}")
@@ -37,8 +40,13 @@ class Util(commands.Cog):
         embed.add_field(name='Total Guilds:', value=serverCount)
         embed.add_field(name='Total Users:', value=memberCount)
         embed.add_field(name='Bot Developers:', value="<@668423998777982997>")
+        embed.add_field(name="Thank You!", value=(f"Hey, **many, many** thanks to the {serverCount} servers and many more people who have halped Hyphen grow. Let's keep it going ||-invite||!"))
         await ctx.send(embed=embed)
 
+    @commands.command()
+    async def invite(self, ctx):
+        embed = discord.Embed(title="Wanna get Hyphen in your server?", description="Here is the link to [add Hyphen](https://discord.com/api/oauth2/authorize?client_id=745622142657364040&permissions=8&scope=bot)!", colour=ctx.author.colour)
+        await ctx.send(embed=embed)
 
 def setup(client):
     client.add_cog(Util(client))

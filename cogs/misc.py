@@ -8,7 +8,7 @@ class Misc(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("Misc is successfully loaded.")
+        print(f"{self.__class__.__name__} has been loaded\n-----")
 
     @commands.command()
     async def echo(self, ctx, *, message=None):
