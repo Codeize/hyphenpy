@@ -11,7 +11,7 @@ class Botdev(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"{self.__class__.__name__} has been loaded\n-----")
+        print(f"\n__COGS__\n{self.__class__.__name__} has been loaded\n-----")
 
     @commands.command()
     @commands.is_owner()

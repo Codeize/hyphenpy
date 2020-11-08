@@ -48,5 +48,20 @@ class Util(commands.Cog):
         embed = discord.Embed(title="Wanna get Hyphen in your server?", description="Here is the link to [add Hyphen](https://discord.com/api/oauth2/authorize?client_id=745622142657364040&permissions=8&scope=bot)!", colour=ctx.author.colour)
         await ctx.send(embed=embed)
 
+    @commands.command()
+    async def support(self, ctx):
+        embed = discord.Embed(title="Need Support?", description="Here is the link to the [support server](https://discord.gg/TvMz7n7J)!", colour=ctx.author.colour)
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.has_guild_permissions(administrator=True)
+    @commands.cooldown(1, 10, commands.BucketType.guild)
+    async def prefix(self, ctx, *, pre="-"):
+        data = cogs._json.read_json("prefixes")
+        data[str(ctx.message.guild.id)] = pre
+        cogs._json.write_json(data, 'prefixes')
+        embed = discord.Embed(title="Prefix Changed!", description=(f"The guild prefix has been set to `{pre}`. Use `{pre}prefix <prefix>` to change it again!"), colour=ctx.author.colour)
+        await ctx.send(embed=embed)
+
 def setup(client):
     client.add_cog(Util(client))

@@ -21,6 +21,14 @@ class Moderation(commands.Cog):
         embed1 = discord.Embed(title="User Kicked!", description=(f"User : {member.mention}, was kicked by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
         await channel.send(embed=embed1)
 
+        embed2 = discord.Embed(title=(f"You have been kicked from {server.name}!"), description=(f"You were kicked by Staff member : {ctx.message.author} with the reason : {reason}!\nJoin again if you like, but behave!"), color=0x31e30e)
+        try:
+            await member.send(embed=embed2)
+            print(f"Messages succeded in sending to {member.name}")
+        
+        except discord.Forbidden:
+            print("User has DMs disabled.")
+
     @commands.command()
     async def ban(self, ctx, member : discord.Member, *, reason="No reason was provided"):
         server = ctx.message.guild
@@ -58,6 +66,14 @@ class Moderation(commands.Cog):
 
         embed1 = discord.Embed(title="User Unbanned!", description=(f"User : {member}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
         await channel.send(embed=embed1)
+
+        embed2 = discord.Embed(title=(f"You have been unbanned from {server.name}!"), description=(f"Welcome back! You have been unbanned from {server.name} with the reason : {reason}\nMake sure to behave this time!"), color=0x31e30e)
+        try:
+            await member.send(embed=embed2)
+            print(f"Messages succeded in sending to {member.name}")
+        
+        except discord.Forbidden:
+            print("User has DMs disabled.")
 
     @commands.command()
     async def clear(self, ctx, amount : int):

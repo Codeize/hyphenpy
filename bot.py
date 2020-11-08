@@ -5,6 +5,7 @@ import random
 import asyncio
 import os
 import json
+import cogs._json
 
 # error color = ff0000
 # successful color = 31e30e
@@ -13,7 +14,13 @@ cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 print(f"{cwd}\n-----")
 
-client = commands.Bot(command_prefix = "-", case_insensitive=True, owner_id=668423998777982997)
+def get_prefix(client, message):
+    data = cogs._json.read_json('prefixes')
+    if not str(message.guild.id) in data:
+        return commands.when_mentioned_or('-')(client, message)
+    return commands.when_mentioned_or(data[str(message.guild.id)])(client, message)
+
+client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, owner_id=668423998777982997)
 
 client.blacklisted_users = []
 client.cwd = cwd
@@ -31,7 +38,10 @@ async def on_ready():
     print("Hyphen is online and active.\n-----")
     print('Servers connected to:')
     for guild in client.guilds:
-        print(guild.name + "\n-----")
+        try:
+            print(guild.name + "\n-----")
+        except UnicodeEncodeError:
+            print("Guild name contains unicode that isn't supported. Skippiing...\n-----")
 
 @client.event
 async def on_command_error(ctx, error):
@@ -47,8 +57,14 @@ async def on_message(message):
     if message.author.id in client.blacklisted_users:
         return
 
-    if message.content.lower().startswith("help"):
-        await message.channel.send("Hey! Why don't you run the help command with `-help` to see what I can do!")
+    if f"<@!{client.user.id}>" in message.content:
+        data = cogs._json.read_json('prefixes')
+        if str(message.guild.id) in data:
+            prefix = data[str(message.guild.id)]
+        else:
+            prefix = '-'
+        prefixMsg = await message.channel.send(f"My prefix here is `{prefix}`")
+        await prefixMsg.add_reaction('👀')
 
     await client.process_commands(message)
 
