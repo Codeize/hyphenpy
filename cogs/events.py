@@ -46,6 +46,8 @@ class Events(commands.Cog):
     async def on_command_error(self, ctx, error):
         #Ignore these errors
         ignored = (commands.CommandNotFound, commands.UserInputError)
+        if ctx.message.author.id == commands.owner_id:
+            return
         if isinstance(error, ignored):
             return
 
@@ -60,7 +62,6 @@ class Events(commands.Cog):
             else:
                 await ctx.send(f" You must wait {int(h)} hours, {int(m)} minutes and {int(s)} seconds to use this command!")
         elif isinstance(error, commands.CheckFailure):
-            # If the command has failed a check, trip this
             embed = discord.Embed(title="Error!",description=(f"Hey! {ctx.author.mention}, you don't have permission to use this command!"), color=0x42cef5)
             await ctx.send(embed=embed)
         raise error
@@ -80,7 +81,6 @@ class Events(commands.Cog):
 
         embed = discord.Embed(title="Minus Server!", description=(f"Hyphen was removed from {guild.name} :( - New Server Count : **{servers}**!"), color=0x31e30e)
         await channel.send(embed=embed)
-
 
 def setup(client):
     client.add_cog(Events(client))

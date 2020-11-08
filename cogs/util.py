@@ -22,7 +22,7 @@ class Util(commands.Cog):
     @commands.command()
     async def updates(self, ctx):
         embed = discord.Embed(title="Hyphen Updates!", color=0x12e612)
-        embed.add_field(name="Under Development :", value="Permission Checks, Logging, More Moderation Commands. Reason for shutdown cmd")
+        embed.add_field(name="Under Development :", value="Permission Checks, Setup, More Moderation Commands. Reason for shutdown cmd")
         embed.add_field(name="Coming Soon :", value="Music, Economy.")
 
         embed.set_footer(text=f"Developed By Codeize#0001  | {self.client.user.name}")
@@ -36,7 +36,7 @@ class Util(commands.Cog):
 
         embed = discord.Embed(title=f'{self.client.user.name} Stats', colour=ctx.author.colour, timestamp=ctx.message.created_at)
 
-        embed.add_field(name='Bot Version:', value="0.0.1")
+        embed.add_field(name='Bot Version:', value="0.0.2")
         embed.add_field(name='Total Guilds:', value=serverCount)
         embed.add_field(name='Total Users:', value=memberCount)
         embed.add_field(name='Bot Developers:', value="<@668423998777982997>")

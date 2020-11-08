@@ -57,21 +57,12 @@ async def on_message(message):
     if message.author.id in client.blacklisted_users:
         return
 
-    if f"<@!{client.user.id}>" in message.content:
-        data = cogs._json.read_json('prefixes')
-        if str(message.guild.id) in data:
-            prefix = data[str(message.guild.id)]
-        else:
-            prefix = '-'
-        prefixMsg = await message.channel.send(f"My prefix here is `{prefix}`")
-        await prefixMsg.add_reaction('👀')
-
     await client.process_commands(message)
 
 async def ch_pr():
     await client.wait_until_ready()
 
-    statuses = ["my developer developing me!", f"over {len(client.guilds)} servers for FREE! | -help", "Netflix and vibing to music!"]
+    statuses = [f"over {len(client.guilds)} servers for FREE! | -help"]
 
     while not client.is_closed():
 

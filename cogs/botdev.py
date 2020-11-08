@@ -44,6 +44,13 @@ class Botdev(commands.Cog):
         embed = discord.Embed(title="User Unblacklisted!", description=(f"User : {user.mention}, was unblacklisted by Codeize. \n With the reason : {reason}!"), color=0x31e30e)
         await ctx.send(embed=embed)
 
+    #@commands.command()
+    #@commands.is_owner()
+    #async def dev(self, ctx):
+        #embed = discord.Embed(title="Entered Dev Mode!", description=(f"Port : **8080** Version : **0.0.3**."), color=0x31e30e)
+        #await ctx.send(embed=embed)#
+        #await ctx.send("THIS IS A DEVELOPMENT BUILD OF HYPHEN!\nALL FEATURES MAY NOT PERFORM AS INTENDED!")
+
     @commands.command()
     @commands.is_owner()
     async def fv(self, ctx):
