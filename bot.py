@@ -20,7 +20,7 @@ def get_prefix(client, message):
         return commands.when_mentioned_or('-')(client, message)
     return commands.when_mentioned_or(data[str(message.guild.id)])(client, message)
 
-client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, owner_id=668423998777982997)
+client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997)
 
 client.blacklisted_users = []
 client.cwd = cwd

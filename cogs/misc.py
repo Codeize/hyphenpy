@@ -11,13 +11,13 @@ class Misc(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} has been loaded\n-----")
 
-    @commands.command()
+    @commands.command(name="echo", description="Echos the message provdied")
     async def echo(self, ctx, *, message=None):
         message = message or "Please provide the message to be echoed!"
         await ctx.message.delete()
         await ctx.send(message)
 
-    @commands.command(aliases=["8ball"])
+    @commands.command(name="8 ball", aliases=["8ball"], description="Ask me a question and.. *I will decide your fate...*")
     async def _8ball(self, ctx, *, question):
         responses = ["It is certain.",
 

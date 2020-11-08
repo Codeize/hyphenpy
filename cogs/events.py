@@ -46,8 +46,6 @@ class Events(commands.Cog):
     async def on_command_error(self, ctx, error):
         #Ignore these errors
         ignored = (commands.CommandNotFound, commands.UserInputError)
-        if ctx.message.author.id == commands.owner_id:
-            return
         if isinstance(error, ignored):
             return
 

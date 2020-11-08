@@ -10,7 +10,7 @@ class Moderation(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} has been loaded\n-----")
 
-    @commands.command()
+    @commands.command(name="Kick", description="Kicks the specified user.")
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason="No reason was provided"):
         embed = discord.Embed(title="User Kicked!", description=(f"User : {member.mention}, was kicked by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
@@ -30,7 +30,7 @@ class Moderation(commands.Cog):
         except discord.Forbidden:
             print("User has DMs disabled.")
 
-    @commands.command()
+    @commands.command(name="Ban", description="Bans the specified user.")
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason="No reason was provided"):
         server = ctx.message.guild
@@ -51,7 +51,7 @@ class Moderation(commands.Cog):
         except discord.Forbidden:
             print("User has DMs disabled.")
 
-    @commands.command()
+    @commands.command(name="Unban", description="Unbans the specified banned user.")
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
         bannedUsers = await ctx.guild.bans()

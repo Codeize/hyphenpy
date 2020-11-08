@@ -13,14 +13,14 @@ class Botdev(commands.Cog):
     async def on_ready(self):
         print(f"\n__COGS__\n{self.__class__.__name__} has been loaded\n-----")
 
-    @commands.command()
+    @commands.command(name="Shutdown", description="(Bot Developer Only!) Terminates Hyphens current session.")
     @commands.is_owner()
     async def shutdown(self, ctx):
         embed = discord.Embed(title="Logged Out!", description="Ok. Process successfully voided. - (Code 0)", color=0x12e612)
         await ctx.send(embed=embed)
         await self.client.logout()
 
-    @commands.command()
+    @commands.command(name="Blacklist", description="(Bot Developer Only!) Blacklists the specified user.")
     @commands.is_owner()
     async def blacklist(self, ctx, user: discord.Member, *, reason="No reason was provided"):
         if ctx.message.author.id == user.id:
@@ -34,7 +34,7 @@ class Botdev(commands.Cog):
         embed = discord.Embed(title="User Blacklisted!", description=(f"User : {user.mention}, was blacklisted by Codeize. \n With the reason : {reason}!"), color=0x31e30e)
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(name="Unblacklist", description="(Bot Developer Only!) Unblacklists the specified blacklisted user.")
     @commands.is_owner()
     async def unblacklist(self, ctx, user: discord.Member, *, reason="No reason was provided"):
         self.client.blacklisted_users.remove(user.id)
