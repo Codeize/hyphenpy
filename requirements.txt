@@ -1,4 +1,2 @@
 discord.py
 asyncio
-json
-pathlib
