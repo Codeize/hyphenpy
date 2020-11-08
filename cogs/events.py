@@ -61,7 +61,8 @@ class Events(commands.Cog):
                 await ctx.send(f" You must wait {int(h)} hours, {int(m)} minutes and {int(s)} seconds to use this command!")
         elif isinstance(error, commands.CheckFailure):
             # If the command has failed a check, trip this
-            await ctx.send("Hey! You lack permission to use this command.")
+            embed = discord.Embed(title="Error!",description=(f"Hey! {ctx.author.mention}, you don't have permission to use this command!"), color=0x42cef5)
+            await ctx.send(embed=embed)
         raise error
 
     @commands.Cog.listener()

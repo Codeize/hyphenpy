@@ -11,6 +11,7 @@ class Moderation(commands.Cog):
         print(f"{self.__class__.__name__} has been loaded\n-----")
 
     @commands.command()
+    @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason="No reason was provided"):
         embed = discord.Embed(title="User Kicked!", description=(f"User : {member.mention}, was kicked by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
         await ctx.send(embed=embed)
@@ -30,6 +31,7 @@ class Moderation(commands.Cog):
             print("User has DMs disabled.")
 
     @commands.command()
+    @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason="No reason was provided"):
         server = ctx.message.guild
         embed = discord.Embed(title="User Banned!", description=(f"User : {member.mention}, was banned by Staff member : {ctx.message.author.mention}. \n With the reason : {reason}!"), color=0x31e30e)
@@ -50,6 +52,7 @@ class Moderation(commands.Cog):
             print("User has DMs disabled.")
 
     @commands.command()
+    @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
         bannedUsers = await ctx.guild.bans()
         memberName, memberDiscriminator = member.split("#")
@@ -76,6 +79,7 @@ class Moderation(commands.Cog):
             print("User has DMs disabled.")
 
     @commands.command()
+    @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount : int):
         await ctx.channel.purge(limit=amount+1)
         embed = discord.Embed(title="Purged Message(s)!",  description=(f"Purged {amount} message(s)!"), color=0x31e30e)
