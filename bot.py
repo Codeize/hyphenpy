@@ -1,11 +1,19 @@
+# Standard Libraries
+from pathlib import Path
+import os
+import random
+import json
+
+# Third Party Libraries
 import discord
 from discord.ext import commands
-from pathlib import Path
-import random
 import asyncio
-import os
-import json
-import cogs._json
+import logging
+import motor.motor_asyncio
+
+# DB
+from utils.mongo import Document
+
 
 # error color = ff0000
 # successful color = 31e30e
@@ -14,15 +22,27 @@ cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 print(f"{cwd}\n-----")
 
-def get_prefix(client, message):
-    data = cogs._json.read_json('prefixes')
-    if not str(message.guild.id) in data:
-        return commands.when_mentioned_or('-')(client, message)
-    return commands.when_mentioned_or(data[str(message.guild.id)])(client, message)
+async def get_prefix(client, message):
+    # If dm's
+    if not message.guild:
+        return commands.when_mentioned_or("-")(client, message)
 
+    try:
+        data = await client.config.find(message.guild.id)
+
+        # Make sure we have a useable prefix
+        if not data or "prefix" not in data:
+            return commands.when_mentioned_or("-")(client, message)
+        return commands.when_mentioned_or(data["prefix"])(client, message)
+    except:
+        return commands.when_mentioned_or("-")(client, message)
+
+secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997)
+client.config_token = secret_file['token']
+client.connection_url = secret_file["mongo"]
+logging.basicConfig(level=logging.INFO)
 
-client.blacklisted_users = []
 client.cwd = cwd
 
 @client.command()
@@ -43,6 +63,14 @@ async def on_ready():
         except UnicodeEncodeError:
             print("Guild name contains unicode that isn't supported. Skippiing...\n-----")
 
+    client.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(client.connection_url))
+    client.db = client.mongo["hyphen"]
+    client.config = Document(client.db, "config")
+    print("Initialized Database\n-----")
+    for document in await client.config.get_all():
+        print(document)
+
+
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
@@ -52,9 +80,6 @@ async def on_command_error(ctx, error):
 @client.event
 async def on_message(message):
     if message.author.id == client.user.id:
-        return
-
-    if message.author.id in client.blacklisted_users:
         return
 
     await client.process_commands(message)
@@ -80,4 +105,4 @@ if __name__ == '__main__':
         if file.endswith(".py") and not file.startswith("_"):
             client.load_extension(f"cogs.{file[:-3]}")
 
-client.run("NzQ1NjIyMTQyNjU3MzY0MDQw.Xz0cuw.PUkr0_srpyc_ymZ8P-t0WJEwA3c")
+client.run(client.config_token)

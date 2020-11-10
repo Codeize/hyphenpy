@@ -3,8 +3,6 @@ import time
 from discord.ext import commands
 import json
 
-import cogs._json
-
 class Util(commands.Cog):
 
     def __init__(self, client):
@@ -50,17 +48,22 @@ class Util(commands.Cog):
 
     @commands.command(name="support", description="Invite to the support server.")
     async def support(self, ctx):
-        embed = discord.Embed(title="Need Support?", description="Here is the link to the [support server](https://discord.gg/TvMz7n7J)!", colour=ctx.author.colour)
+        embed = discord.Embed(title="Need Support?", description="Here is the link to the [support server](https://discord.gg/5fwPD4QxjJ)!", colour=ctx.author.colour)
         await ctx.send(embed=embed)
 
-    @commands.command(name="prefix", description="Change the guilds prefix.")
+    @commands.command(name="prefix",aliases=["changeprefix", "setprefix", "cp"],description="Change your guilds prefix!",usage="[prefix]")
+    @commands.has_guild_permissions(manage_guild=True)
+    async def prefix(self, ctx, *, prefix="-"):
+        await self.client.config.upsert({"_id": ctx.guild.id, "prefix": prefix})
+        embed = discord.Embed(title="Prefix Changed!", description=(f"The guild prefix has been set to `{prefix}`. Use `{prefix}prefix [prefix]` to change it again!"), colour=ctx.author.colour)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="deleteprefix", aliases=["dp"], description="Delete your guilds prefix!")
+    @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
-    @commands.cooldown(1, 10, commands.BucketType.guild)
-    async def prefix(self, ctx, *, pre="-"):
-        data = cogs._json.read_json("prefixes")
-        data[str(ctx.message.guild.id)] = pre
-        cogs._json.write_json(data, 'prefixes')
-        embed = discord.Embed(title="Prefix Changed!", description=(f"The guild prefix has been set to `{pre}`. Use `{pre}prefix <prefix>` to change it again!"), colour=ctx.author.colour)
+    async def deleteprefix(self, ctx):
+        await self.client.config.unset({"_id": ctx.guild.id, "prefix": 1})
+        embed = discord.Embed(title="Prefix Erased!", description="This guilds prefix has been set back to the default! The default prefix is `-`", colour=ctx.author.colour)
         await ctx.send(embed=embed)
 
 def setup(client):

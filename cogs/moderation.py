@@ -51,29 +51,52 @@ class Moderation(commands.Cog):
         except discord.Forbidden:
             print("User has DMs disabled.")
 
-    @commands.command(name="Unban", description="Unbans the specified banned user.")
+    #@commands.command(name="Unban", description="Unbans the specified banned user.")
+    #@commands.has_permissions(ban_members=True)
+    #async def unban(self, ctx, *, member : discord.Member):
+        #bannedUsers = await ctx.guild.bans()
+        #memberName, memberDiscriminator = member.split("#")
+
+        #for banEntry in bannedUsers:
+            #user = banEntry.user
+
+            #if (user.name, user.discriminator) == (user.name, user.discriminator):
+                #embed = discord.Embed(title="User Unbanned!", description=(f"User : {member}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
+                #await ctx.send(embed=embed)
+                #await ctx.guild.unban(user)
+
+        #channel = self.client.get_channel(774727230122622976)
+
+        #embed1 = discord.Embed(title="User Unbanned!", description=(f"User : {member}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
+        #await channel.send(embed=embed1)
+
+        #embed2 = discord.Embed(title=(f"You have been unbanned from {server.name}!"), description=(f"Welcome back! You have been unbanned from {server.name} with the reason : {reason}\nMake sure to behave this time!"), color=0x31e30e)
+        #try:
+            #await member.send(embed=embed2)
+            #print(f"Messages succeded in sending to {member.name}")
+        
+        #except discord.Forbidden:
+            #print("User has DMs disabled.")
+
+    @commands.command(name="unban", aliases=["ub"], description="Unbans the specified banned user.", usage="unban <ID/Username + Discriminator>")
     @commands.has_permissions(ban_members=True)
-    async def unban(self, ctx, *, member):
-        bannedUsers = await ctx.guild.bans()
-        memberName, memberDiscriminator = member.split("#")
-
-        for banEntry in bannedUsers:
-            user = banEntry.user
-
-            if (user.name, user.discriminator) == (user.name, user.discriminator):
-                embed = discord.Embed(title="User Unbanned!", description=(f"User : {member}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
-                await ctx.send(embed=embed)
-                await ctx.guild.unban(user)
+    async def _unban(self, ctx, id: int):
+        user = await self.client.fetch_user(id)
+        await ctx.guild.unban(user)
+        embed = discord.Embed(title="User Unbanned!", description=(f"User : {user}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
+        await ctx.send(embed=embed)
 
         channel = self.client.get_channel(774727230122622976)
 
-        embed1 = discord.Embed(title="User Unbanned!", description=(f"User : {member}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
+        embed1 = discord.Embed(title="User Unbanned!", description=(f"User : {user}, was unbanned by Staff member : {ctx.message.author.mention}!"), color=0x31e30e)
         await channel.send(embed=embed1)
 
-        embed2 = discord.Embed(title=(f"You have been unbanned from {server.name}!"), description=(f"Welcome back! You have been unbanned from {server.name} with the reason : {reason}\nMake sure to behave this time!"), color=0x31e30e)
+        server = ctx.message.guild
+        
+        embed2 = discord.Embed(title=(f"You have been unbanned from {server.name}!"), description=(f"Welcome back! You have been unbanned from {server.name}.\nMake sure to behave this time!"), color=0x31e30e)
         try:
-            await member.send(embed=embed2)
-            print(f"Messages succeded in sending to {member.name}")
+            await user.send(embed=embed2)
+            print(f"Messages succeded in sending to {user.name}")
         
         except discord.Forbidden:
             print("User has DMs disabled.")
