@@ -1,2 +1,4 @@
 discord.py
 asyncio
+motor.motor_asyncio
+logging
