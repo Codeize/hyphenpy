@@ -3,7 +3,7 @@ import time
 from discord.ext import commands
 import json
 
-class Utility(commands.Cog):
+class Util(commands.Cog):
 
     def __init__(self, client):
         self.client = client
@@ -67,5 +67,15 @@ class Utility(commands.Cog):
         embed = discord.Embed(title="Prefix Erased!", description="This guilds prefix has been set back to the default! The default prefix is `-`", colour=ctx.author.colour)
         await ctx.send(embed=embed)
 
+    @commands.command(name="credits", description="Many thanks to these users!")
+    async def credits(self, ctx):
+        embed = discord.Embed(title="The Credits!", description="**Huge** thanks to these users, Hyphen wouldn't have these features without your help!", colour=ctx.author.colour)
+        embed.add_field(name="Its not an Apple#6103", value="Thanks for helping with the sharding process!")
+        embed.add_field(name="3vil#0001", value="Thanks for all the advice when I was getting started, and even now!")
+        embed.add_field(name="Cookie_#7907", value="Thanks for a lot of development help, but mainly testing and feedback!")
+        embed.add_field(name="Goose_#2548", value="Thanks for helping with technical issues!")
+        embed.add_field(name="Extinct#1607", value="Thanks for all the support and enthusiasm during the early versions of Hyphen!")
+        await ctx.send(embed=embed)
+
 def setup(client):
-    client.add_cog(Utility(client))
+    client.add_cog(Util(client))
