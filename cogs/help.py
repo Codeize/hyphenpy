@@ -1,100 +1,100 @@
 import discord
 from discord.ext import commands
-import re
-import math
-import random
+
+from utils.util import Pag
 
 class Help(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+        self.cmds_per_page = 6
+
+    def get_command_signature(self, command: commands.Command, ctx: commands.Context):
+        aliases = "|".join(command.aliases)
+        cmd_invoke = f"[{command.name}|{aliases}]" if command.aliases else command.name
+
+        full_invoke = command.qualified_name.replace(command.name, "")
+
+        signature = f"{ctx.prefix}{full_invoke}{cmd_invoke} {command.signature}"
+        return signature
+
+    async def return_filtered_commands(self, walkable, ctx):
+        filtered = []
+
+        for c in walkable.walk_commands():
+            try:
+                if c.hidden:
+                    continue
+
+                elif c.parent:
+                    continue
+
+                await c.can_run(ctx)
+                filtered.append(c)
+            except commands.CommandError:
+                continue
+            
+            return self.return_sorted_commands(filtered)
+
+    def return_sorted_commands(self, commandList):
+        return sorted(commandList, key=lambda x: x.name)
+
+    async def setup_help_pag(self, ctx, entity=None, title=None):
+        entity = entity or self.client
+        title = title or self.client.description
+
+        pages = []
+
+        if isinstance(entity, commands.Command):
+            filtered_commands = (
+                list(set(entity.all_commands.values()))
+                if hasattr(entity, "all_commands")
+                else []
+            )
+            filtered_commands.insert(0, entity)
+
+        else:
+            filtered_commands = await self.return_filtered_commands(entity, ctx)
+
+        for i in range(0, len(filtered_commands), self.cmds_per_page):
+            next_commands = filtered_commands[i : i + self.cmds_per_page]
+            commands_entry = ""
+
+            for cmd in next_commands:
+                desc = cmd.short_doc or cmd.description
+                signature = self.get_command_signature(cmd, ctx)
+                subcommand = "Has subcommands" if hasattr(cmd, "all_commands") else ""
+
+                commands_entry += (
+                    f"• **__{cmd.name}__**\n```\n{signature}\n```\n{desc}\n"
+                    if isinstance(entity, commands.Command)
+                    else f"• **__{cmd.name}__**\n{desc}\n   {subcommand}\n"
+                )
+            pages.append(commands_entry)
+
+        await Pag(title=title, color=0xCE2029, entries=pages, length=1).start(ctx)
 
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} has been loaded\n-----")
 
-    @commands.command(
-        name="help", aliases=["h", "commands"], description="The help command!"
-    )
-    async def help(self, ctx, cog="1"):
-        helpEmbed = discord.Embed(title="Need a hand?", color=ctx.author.color)
-        helpEmbed.set_thumbnail(url=ctx.author.avatar_url)
-
-        # Get a list of all our current cogs & rmeove ones without commands
-        cogs = [c for c in self.client.cogs.keys()]
-        cogs.remove('Events')
-
-        totalPages = math.ceil(len(cogs) / 4)
-
-        if re.search(r"\d", str(cog)):
-            cog = int(cog)
-            if cog > totalPages or cog < 1:
-                await ctx.send(f"Invalid page number: `{cog}`. Please pick from {totalPages} pages.\nAlternatively,  run `help` to see the first help page.")
-                return
-            
-            helpEmbed.set_footer(text=f"<> = Required - () = Optional | Page {cog} of {totalPages}.")
-
-            neededCogs = []
-            for i in range(4):
-                x = i + (int(cog) - 1) * 4
-                try:
-                    neededCogs.append(cogs[x])
-                except IndexError:
-                    pass
-
-            for cog in neededCogs:
-                    commandList = ""
-                    for command in self.client.get_cog(cog).walk_commands():
-                        if command.hidden:
-                            continue
-
-                        elif command.parent != None:
-                            continue
-
-                        commandList += f"**{command.name}** - {command.description}\n"
-                    commandList += "\n"
-
-                    helpEmbed.add_field(name=cog, value=commandList, inline=False)
-
-        elif re.search(r"[a-zA-Z]", str(cog)):
-            lowerCogs = [c.lower() for c in cogs]
-            if cog.lower() not in lowerCogs:
-                await ctx.send(f"Invalid argument: `{cog}`. Please pick from {totalPages} pages.\nAlternatively, simply run `help` to see page one or type `help [category]` to see that categories help command!")
-                return
-
-                helpEmbed.set_footer(text=f"<> - Required & [] - Optional | Cog {(lowerCogs.index(cog.lower())+1)} of {len(lowerCogs)}")
-
-            helpText = ""
-
-            for command in self.client.get_cog(cogs[lowerCogs.index(cog.lower())]).walk_commands():
-                if command.hidden:
-                    continue
-        
-                elif command.parent != None:
-                    continue
-
-                helpText += f"```{command.name}```\n**{command.description}**\n\n"
-
-                if len(command.aliases) > 0:
-                    helpText += f'**Aliases: ** `{", ".join(command.aliases)}`'
-                helpText += '\n'
-
-                data = await self.client.config.prefixes.json(ctx.guild.id)
-                if not data or "prefix" not in data:
-                    prefix = self.client.DEFAULTPREFIX
-                else:
-                    prefix = data['prefix']
-
-
-                helpText += f'**Format:** `{prefix}{command.name} {command.usage if command.usage is not None else ""}`\n\n'
-            helpEmbed.description = helpText
+    @commands.command(name="Help", aliases=["h", "ineedhelp"], description="The help command!")
+    async def help_command(self, ctx, *, entity=None):
+        if not entity:
+            await self.setup_help_pag(ctx)
 
         else:
-            await ctx.send(f"Invalid argument: `{cog}`\nPlease pick from {totalPages} pages.\nAlternatively, simply run `help` to see page one or type `help [category]` to see that categories help command!")
-            return
-        
-        await ctx.send(embed=helpEmbed)
+            cog = self.client.get_cog(entity)
+            if cog:
+                await self.setup_help_pag(ctx, cog, f"{cog.qualified_name}'s Commands'")
 
+            else:
+                command = self.client.get_command(entity)
+                if command:
+                    await self.setup_help_pag(ctx, command, command.name)
+
+                else:
+                    await ctx.send("Entity not found!")
 
 def setup(client):
     client.add_cog(Help(client))

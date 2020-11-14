@@ -3,7 +3,7 @@ import time
 from discord.ext import commands
 import json
 
-class Util(commands.Cog):
+class Utility(commands.Cog):
 
     def __init__(self, client):
         self.client = client
@@ -35,6 +35,7 @@ class Util(commands.Cog):
         embed = discord.Embed(title=f'{self.client.user.name} Stats', colour=ctx.author.colour, timestamp=ctx.message.created_at)
 
         embed.add_field(name='Bot Version:', value="0.0.2")
+        embed.add_field(name='dpy:', value=(f"{discord.version_info}."))
         embed.add_field(name='Total Guilds:', value=serverCount)
         embed.add_field(name='Total Users:', value=memberCount)
         embed.add_field(name='Bot Developers:', value="<@668423998777982997>")
@@ -46,7 +47,7 @@ class Util(commands.Cog):
         embed = discord.Embed(title="Wanna get Hyphen in your server?", description="Here is the link to [add Hyphen](https://discord.com/api/oauth2/authorize?client_id=745622142657364040&permissions=8&scope=bot)!", colour=ctx.author.colour)
         await ctx.send(embed=embed)
 
-    @commands.command(name="support", description="Invite to the support server.")
+    @commands.command(name="Support", description="Invite to the support server.")
     async def support(self, ctx):
         embed = discord.Embed(title="Need Support?", description="Here is the link to the [support server](https://discord.gg/5fwPD4QxjJ)!", colour=ctx.author.colour)
         await ctx.send(embed=embed)
@@ -67,4 +68,4 @@ class Util(commands.Cog):
         await ctx.send(embed=embed)
 
 def setup(client):
-    client.add_cog(Util(client))
+    client.add_cog(Utility(client))

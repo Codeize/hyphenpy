@@ -6,7 +6,7 @@ import json
 
 # Third Party Libraries
 import discord
-from discord.ext import commands
+from discord.ext import commands, buttons
 import asyncio
 import logging
 import motor.motor_asyncio
@@ -37,11 +37,13 @@ async def get_prefix(client, message):
     except:
         return commands.when_mentioned_or("-")(client, message)
 
+intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997)
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)
+client.joke_api_key = secret_file["x-rapidapi-key"]
 
 client.cwd = cwd
 
@@ -69,7 +71,6 @@ async def on_ready():
     print("Initialized Database\n-----")
     for document in await client.config.get_all():
         print(document)
-
 
 @client.event
 async def on_command_error(ctx, error):
