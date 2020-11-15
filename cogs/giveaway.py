@@ -20,7 +20,7 @@ def convert(argument):
             time += time_dict[value] * float(key)
         except KeyError:
             raise commands.BadArgument(
-                f"{value} is an invalid time key! h|m|s|d are valid arguments"
+                f"{value} is an invalid time key! h|m|s|d are valid arguments."
             )
         except ValueError:
             raise commands.BadArgument(f"{key} is not a number!")
@@ -36,6 +36,7 @@ class Giveaway(commands.Cog):
         description="Create a full giveaway!"
     )
     @commands.guild_only()
+    @commands.has_permissions(ban_members=True)
     async def giveaway(self, ctx):
         await ctx.send("Ok! I'll ask some questions and we'll get started!")
 

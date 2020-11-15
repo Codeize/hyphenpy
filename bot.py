@@ -68,6 +68,7 @@ async def on_ready():
     client.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(client.connection_url))
     client.db = client.mongo["hyphen"]
     client.config = Document(client.db, "config")
+    client.setup = Document(client.db, "setup")
     print("Initialized Database\n-----")
     for document in await client.config.get_all():
         print(document)
