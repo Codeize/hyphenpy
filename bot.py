@@ -39,7 +39,7 @@ async def get_prefix(client, message):
 
 intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
-client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997)
+client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997, intents=intents)
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)

@@ -17,7 +17,7 @@ class Misc(commands.Cog):
         await ctx.message.delete()
         await ctx.send(message)
 
-    @commands.command(name="8 ball", aliases=["8ball"], desc="Ask me a question and.. *I will decide your fate...*")
+    @commands.command(name="8 ball", aliases=["8ball"], description="Ask me a question and.. *I will decide your fate...*")
     async def _8ball(self, ctx, *, question):
         responses = ["It is certain.",
 
