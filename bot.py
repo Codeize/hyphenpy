@@ -46,6 +46,7 @@ logging.basicConfig(level=logging.INFO)
 client.joke_api_key = secret_file["x-rapidapi-key"]
 
 client.cwd = cwd
+client.muted_users = {}
 
 @client.command()
 async def load(ctx, extension):
@@ -69,9 +70,17 @@ async def on_ready():
     client.db = client.mongo["hyphen"]
     client.config = Document(client.db, "config")
     client.setup = Document(client.db, "setup")
+    client.mutes = Document(client.db, "mutes")
     print("Initialized Database\n-----")
+    
     for document in await client.config.get_all():
         print(document)
+
+    currentMutes = await client.mutes.get_all()
+    for mute in currentMutes:
+        client.muted_users[mute["_id"]] = mute
+
+    print(client.muted_users)
 
 @client.event
 async def on_command_error(ctx, error):

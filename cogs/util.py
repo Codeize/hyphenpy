@@ -2,6 +2,9 @@ import discord
 import time
 from discord.ext import commands
 import json
+import datetime
+
+start_time = time.time()
 
 class Util(commands.Cog):
 
@@ -31,6 +34,9 @@ class Util(commands.Cog):
     async def stats(self, ctx):
         serverCount = len(self.client.guilds)
         memberCount = len(set(self.client.get_all_members()))
+        current_time = time.time()
+        difference = int(round(current_time - start_time))
+        text = str(datetime.timedelta(seconds=difference))
 
         embed = discord.Embed(title=f'{self.client.user.name} Stats', colour=ctx.author.colour, timestamp=ctx.message.created_at)
 
@@ -38,9 +44,22 @@ class Util(commands.Cog):
         embed.add_field(name='dpy:', value=(f"{discord.version_info}."))
         embed.add_field(name='Total Guilds:', value=serverCount)
         embed.add_field(name='Total Users:', value=memberCount)
+        embed.add_field(name='Uptime:', value=text)
         embed.add_field(name='Bot Developers:', value="<@668423998777982997>")
         embed.add_field(name="Thank You!", value=(f"Hey, **many, many** thanks to the {serverCount} servers and many more people who have halped Hyphen grow. Let's keep it going ||-invite||!"))
         await ctx.send(embed=embed)
+
+    @commands.command(name="Uptime", description="Shows Hyphens current uptime.")
+    async def uptime(self, ctx):
+        current_time = time.time()
+        difference = int(round(current_time - start_time))
+        text = str(datetime.timedelta(seconds=difference))
+        embed = discord.Embed(title="Uptime", description="I prefer uptime, not downtime! :)", colour=ctx.message.author.color)
+        embed.add_field(name="Time Elapsed:", value=text)
+        try:
+            await ctx.send(embed=embed)
+        except discord.HTTPException:
+            await ctx.send("Current uptime: " + text)
 
     @commands.command(name="Invite", description="Invite Hyphen to your servers!")
     async def invite(self, ctx):
@@ -75,6 +94,26 @@ class Util(commands.Cog):
         embed.add_field(name="Cookie_#7907", value="Thanks for a lot of development help, but mainly testing and feedback!")
         embed.add_field(name="Goose_#2548", value="Thanks for helping with technical issues!")
         embed.add_field(name="Extinct#1607", value="Thanks for all the support and enthusiasm during the early versions of Hyphen!")
+        await ctx.send(embed=embed)
+
+    @commands.command(name="Channel Stats", aliases=['cs'], description="Sends a nice fancy embed with some channel stats!")
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def channelstats(self, ctx):
+        """
+        Sends a nice fancy embed with some channel stats
+        """
+        channel = ctx.channel
+        embed = discord.Embed(title=f"Stats for **{channel.name}**", description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'This channel is not in a category'}", color=ctx.author.color)
+        embed.add_field(name="Channel Guild", value=ctx.guild.name, inline=False)
+        embed.add_field(name="Channel Id", value=channel.id, inline=False)
+        embed.add_field(name="Channel Description", value=f"{channel.topic if channel.topic else 'No description!.'}", inline=False)
+        embed.add_field(name="Channel Position", value=channel.position, inline=False)
+        embed.add_field(name="Channel Slowmode Delay", value=channel.slowmode_delay, inline=False)
+        embed.add_field(name="Channel is marked as NSFW", value=channel.is_nsfw(), inline=False)
+        embed.add_field(name="Channel is a News channel", value=channel.is_news(), inline=False)
+        embed.add_field(name="Channel Creation Time", value=channel.created_at, inline=False)
+        embed.add_field(name="Channel Permissions Synced", value=channel.permissions_synced, inline=False)
+
         await ctx.send(embed=embed)
 
 def setup(client):
