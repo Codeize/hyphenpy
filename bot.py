@@ -10,6 +10,7 @@ from discord.ext import commands, buttons
 import asyncio
 import logging
 import motor.motor_asyncio
+from AntiSpam import AntiSpamHandler
 
 # DB
 from utils.mongo import Document
@@ -23,7 +24,6 @@ cwd = str(cwd)
 print(f"{cwd}\n-----")
 
 async def get_prefix(client, message):
-    # If dm's
     if not message.guild:
         return commands.when_mentioned_or("-")(client, message)
 
@@ -40,6 +40,7 @@ async def get_prefix(client, message):
 intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997, intents=intents)
+client.handler = AntiSpamHandler(client, 1, banThreshold=5, warnMessage="Hey! $MENTIONUSER, please stop spamming/sending duplicate messages. If you continue you will be kicked!", ignoreBots=True)
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)
@@ -93,6 +94,7 @@ async def on_message(message):
     if message.author.id == client.user.id:
         return
 
+    client.handler.propagate(message)
     await client.process_commands(message)
 
 async def ch_pr():

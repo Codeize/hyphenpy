@@ -46,7 +46,7 @@ class Util(commands.Cog):
         embed.add_field(name='Total Users:', value=memberCount)
         embed.add_field(name='Uptime:', value=text)
         embed.add_field(name='Bot Developers:', value="<@668423998777982997>")
-        embed.add_field(name="Thank You!", value=(f"Hey, **many, many** thanks to the {serverCount} servers and many more people who have halped Hyphen grow. Let's keep it going ||-invite||!"))
+        embed.add_field(name="Thank You!", value=(f"Hey, **many, many** thanks to the {serverCount} servers and many more people who have helped Hyphen grow. Let's keep it going ||-invite||!"))
         await ctx.send(embed=embed)
 
     @commands.command(name="Uptime", description="Shows Hyphens current uptime.")
@@ -94,6 +94,9 @@ class Util(commands.Cog):
         embed.add_field(name="Cookie_#7907", value="Thanks for a lot of development help, but mainly testing and feedback!")
         embed.add_field(name="Goose_#2548", value="Thanks for helping with technical issues!")
         embed.add_field(name="Extinct#1607", value="Thanks for all the support and enthusiasm during the early versions of Hyphen!")
+        embed.add_field(name="Reiterpallasch#2732", value="Thanks for testing the early versions of Hyphen!")
+        embed.add_field(name="tpyhr#3765", value="Thanks for giving feedback and promoting Hyphen!")
+        embed.add_field(name="Skelmis#9135", value="Thanks for all the support, tips, and advice for Hyphen! But, most importantly, thanks for helping with the AntiSpam module!")
         await ctx.send(embed=embed)
 
     @commands.command(name="Channel Stats", aliases=['cs'], description="Sends a nice fancy embed with some channel stats!")
