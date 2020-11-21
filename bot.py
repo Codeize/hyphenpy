@@ -91,10 +91,14 @@ async def on_command_error(ctx, error):
 
 @client.event
 async def on_message(message):
+    antispamServer = 764480029936713748
     if message.author.id == client.user.id:
         return
 
-    client.handler.propagate(message)
+    if message.guild.id == antispamServer:
+        client.handler.propagate(message)
+    else:
+        return
     await client.process_commands(message)
 
 async def ch_pr():
