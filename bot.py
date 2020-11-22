@@ -10,7 +10,6 @@ from discord.ext import commands, buttons
 import asyncio
 import logging
 import motor.motor_asyncio
-from AntiSpam import AntiSpamHandler
 
 # DB
 from utils.mongo import Document
@@ -40,7 +39,6 @@ async def get_prefix(client, message):
 intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997, intents=intents)
-client.handler = AntiSpamHandler(client, 1, banThreshold=5, warnMessage="Hey! $MENTIONUSER, please stop spamming/sending duplicate messages. If you continue you will be kicked!", ignoreBots=True)
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)
@@ -63,7 +61,7 @@ async def on_ready():
     print('Servers connected to:')
     for guild in client.guilds:
         try:
-            print(guild.name + "\n-----")
+            print(f"{guild.name} \n-----")
         except UnicodeEncodeError:
             print("Guild name contains unicode that isn't supported. Skippiing...\n-----")
 
@@ -86,18 +84,12 @@ async def on_ready():
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        embed = discord.Embed(title="Error!", description="Oops, it seems an error occurred! \n According to what my developer told me, you forgot to add a required argument, check the help command to see what you did wrong. \n If all else fails join the [Official Support Server](https://discord.gg/KCZ36rS9g6) and someone will help you! \n Error 422 - Unprocessable Input (commands.MissingRequiredArgument).", color=0xff0000)
-        await ctx.send(embed=embed)
+        embed = discord.Embed(title="Error!", description="Error 422 - Unprocessable Input (commands.MissingRequiredArgument).", color=0xff0000)
+        await ctx.send(embed=embed) 
 
 @client.event
 async def on_message(message):
-    antispamServer = 764480029936713748
     if message.author.id == client.user.id:
-        return
-
-    if message.guild.id == antispamServer:
-        client.handler.propagate(message)
-    else:
         return
     await client.process_commands(message)
 

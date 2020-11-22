@@ -99,6 +99,11 @@ class Util(commands.Cog):
         embed.add_field(name="Skelmis#9135", value="Thanks for all the support, tips, and advice for Hyphen! But, most importantly, thanks for helping with the AntiSpam module!")
         await ctx.send(embed=embed)
 
+    @commands.command(name="privacy", description="Shows Hyphens Legal Policy.")
+    async def privacy(self, ctx):
+        embed = discord.Embed(title="The Boring Legal Stuff!", description="[Here](https://hyphen.codeize.dev/privacy/) is my Privacy Policy!", colour=ctx.author.colour)
+        await ctx.send(embed=embed)
+    
     @commands.command(name="Channel Stats", aliases=['cs'], description="Sends a nice fancy embed with some channel stats!")
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def channelstats(self, ctx):
