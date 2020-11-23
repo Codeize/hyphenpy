@@ -10,10 +10,10 @@ from discord.ext import commands, buttons
 import asyncio
 import logging
 import motor.motor_asyncio
+from AntiSpam import AntiSpamHandler
 
 # DB
 from utils.mongo import Document
-
 
 # error color = ff0000
 # successful color = 31e30e
@@ -21,6 +21,71 @@ from utils.mongo import Document
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 print(f"{cwd}\n-----")
+
+warn_embed_dict = {
+    "title": "**Hey $USERNAME!**",
+    "description": "Please refrain from spamming! ~~It's not cool smh.~~",
+    "timestamp": True,
+    "color": 0xFF0000,
+    "footer": {"text": "$BOTNAME", "icon_url": "$BOTAVATAR"},
+    "author": {"name": "$GUILDNAME", "icon_url": "$GUILDICON"},
+    "fields": [
+        {"name": "Current warns:", "value": "$WARNCOUNT", "inline": False},
+        {"name": "Current kicks:", "value": "$KICKCOUNT", "inline": False},
+    ],
+}
+
+guild_kick_embed_dict = {
+    "title": "**$USERNAME was kicked!**",
+    "description": "$USERNAME was kicked for excessive spamming!",
+    "timestamp": True,
+    "color": 0xFF0000,
+    "footer": {"text": "$BOTNAME", "icon_url": "$BOTAVATAR"},
+    "author": {"name": "$GUILDNAME", "icon_url": "$GUILDICON"},
+    "fields": [
+        {"name": "Current warns:", "value": "$WARNCOUNT", "inline": False},
+        {"name": "Current kicks:", "value": "$KICKCOUNT", "inline": False},
+    ],
+}
+
+guild_ban_embed_dict = {
+    "title": "**$USERNAME was banned!**",
+    "description": "$USERNAME was banned permanentely for excessive spamming!",
+    "timestamp": True,
+    "color": 0xFF0000,
+    "footer": {"text": "$BOTNAME", "icon_url": "$BOTAVATAR"},
+    "author": {"name": "$GUILDNAME", "icon_url": "$GUILDICON"},
+    "fields": [
+        {"name": "Current warns:", "value": "$WARNCOUNT", "inline": False},
+        {"name": "Current kicks:", "value": "$KICKCOUNT", "inline": False},
+    ],
+}
+
+user_kick_embed_dict = {
+    "title": "**$USERNAME, you were kicked!**",
+    "description": "You were kicked from $GUILDNAME because you were spamming!",
+    "timestamp": True,
+    "color": 0xFF0000,
+    "footer": {"text": "$BOTNAME", "icon_url": "$BOTAVATAR"},
+    "author": {"name": "$GUILDNAME", "icon_url": "$GUILDICON"},
+    "fields": [
+        {"name": "Current warns:", "value": "$WARNCOUNT", "inline": False},
+        {"name": "Current kicks:", "value": "$KICKCOUNT", "inline": False},
+    ],
+}
+
+user_ban_embed_dict = {
+    "title": "**$USERNAME, you were banned!**",
+    "description": "You were banned from $GUILDNAME because you were spamming!",
+    "timestamp": True,
+    "color": 0xFF0000,
+    "footer": {"text": "$BOTNAME", "icon_url": "$BOTAVATAR"},
+    "author": {"name": "$GUILDNAME", "icon_url": "$GUILDICON"},
+    "fields": [
+        {"name": "Current warns:", "value": "$WARNCOUNT", "inline": False},
+        {"name": "Current kicks:", "value": "$KICKCOUNT", "inline": False},
+    ],
+}
 
 async def get_prefix(client, message):
     if not message.guild:
@@ -39,6 +104,7 @@ async def get_prefix(client, message):
 intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997, intents=intents)
+client.handler = AntiSpamHandler(client, 1, ban_threshold=10, kick_threshold=5, message_interval=15000, ignore_bots=False, guild_warn_message=warn_embed_dict, guild_kick_message=guild_kick_embed_dict, guild_ban_message=guild_ban_embed_dict, user_kick_message=user_kick_embed_dict, user_ban_message=user_ban_embed_dict)
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)
@@ -91,12 +157,13 @@ async def on_command_error(ctx, error):
 async def on_message(message):
     if message.author.id == client.user.id:
         return
+    client.handler.propagate(message)
     await client.process_commands(message)
 
 async def ch_pr():
     await client.wait_until_ready()
 
-    statuses = [f"over {len(client.guilds)} servers for FREE! | -help"]
+    statuses = [f"over {len(client.guilds)} servers for FREE [-invite]! | -help"]
 
     while not client.is_closed():
 
