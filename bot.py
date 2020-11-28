@@ -3,6 +3,8 @@ from pathlib import Path
 import os
 import random
 import json
+import io
+import re
 
 # Third Party Libraries
 import discord
@@ -10,7 +12,11 @@ from discord.ext import commands, buttons
 import asyncio
 import logging
 import motor.motor_asyncio
-from AntiSpam import AntiSpamHandler
+import textwrap
+import contextlib
+from traceback import format_exception
+from utils.util import clean_code, Pag
+import traceback
 
 # DB
 from utils.mongo import Document
@@ -104,7 +110,6 @@ async def get_prefix(client, message):
 intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997, intents=intents)
-client.handler = AntiSpamHandler(client, 1, ban_threshold=10, kick_threshold=5, message_interval=15000, ignore_bots=False, guild_warn_message=warn_embed_dict, guild_kick_message=guild_kick_embed_dict, guild_ban_message=guild_ban_embed_dict, user_kick_message=user_kick_embed_dict, user_ban_message=user_ban_embed_dict)
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)
@@ -120,6 +125,111 @@ async def load(ctx, extension):
 @client.command()
 async def unload(ctx, extension):
     client.unload_extension(f"cogs.{extension}")
+
+
+@client.command(
+    name="reload",
+    description="Reload all/one of the bots cogs!",
+    usage="[cog]",
+    )
+@commands.is_owner()
+async def reload(ctx, cog=None):
+    if not cog:
+        async with ctx.typing():
+            embed = discord.Embed(
+                title="Reloading all cogs!",
+                color=0x808080,
+                timestamp=ctx.message.created_at,
+                )
+            description = ""
+            for ext in os.listdir("./cogs/"):
+                if ext.endswith(".py") and not ext.startswith("_"):
+                    try:
+                        client.unload_extension(f"cogs.{ext[:-3]}")
+                        await asyncio.sleep(0.5)
+                        client.load_extension(f"cogs.{ext[:-3]}")
+                        description += f"Reloaded: `{ext}`\n"
+                    except Exception as e:
+                        embed.add_field(
+                            name=f"Failed to reload: `{ext}`",
+                            value=e,
+                        )
+                await asyncio.sleep(0.5)
+            embed.description = description
+            await ctx.send(embed=embed)
+    else:
+        async with ctx.typing():
+            embed = discord.Embed(
+                title=f"Reloading {cog}!",
+                color=0x808080,
+                timestamp=ctx.message.created_at,
+            )
+            cog = cog.lower()
+            ext = f"{cog}.py"
+            if not os.path.exists(f"./cogs/{ext}"):
+                embed.add_field(
+                    name=f"Failed to reload: `{ext}`",
+                    value="This cog file does not exist.",
+                )
+            elif ext.endswith(".py") and not ext.startswith("_"):
+                try:
+                    client.unload_extension(f"cogs.{ext[:-3]}")
+                    await asyncio.sleep(0.5)
+                    client.load_extension(f"cogs.{ext[:-3]}")
+                    embed.description = f"Reloaded: `{ext}`"
+                except Exception:
+                    desired_trace = traceback.format_exc()
+                    embed.add_field(
+                        name=f"Failed to reload: `{ext}`",
+                        value=desired_trace,
+                    )
+            await asyncio.sleep(0.5)
+        await ctx.send(embed=embed)
+
+@client.command(name="eval", aliases=["exec"])
+@commands.is_owner()
+async def _eval(ctx, *, code):
+    """
+    Evaluates given code.
+    """
+    code = clean_code(code)
+
+    local_variables = {
+        "discord": discord,
+        "commands": commands,
+        "client": client,
+        "ctx": ctx,
+        "channel": ctx.channel,
+        "author": ctx.author,
+        "guild": ctx.guild,
+        "message": ctx.message,
+    }
+
+    stdout = io.StringIO()
+
+    try:
+        with contextlib.redirect_stdout(stdout):
+            exec(
+                f"async def func():\n{textwrap.indent(code, '    ')}",
+                local_variables,
+            )
+
+            obj = await local_variables["func"]()
+            result = f"{stdout.getvalue()}\n-- {obj}\n"
+
+    except Exception as e:
+        result = "".join(format_exception(e, e, e.__traceback__))
+
+    pager = Pag(
+        timeout=180,
+        use_defaults=True,
+        entries=[result[i : i + 2000] for i in range(0, len(result), 2000)],
+        length=1,
+        prefix="```py\n",
+        suffix="```",
+    )
+
+    await pager.start(ctx)
 
 @client.event
 async def on_ready():
@@ -157,7 +267,6 @@ async def on_command_error(ctx, error):
 async def on_message(message):
     if message.author.id == client.user.id:
         return
-    client.handler.propagate(message)
     await client.process_commands(message)
 
 async def ch_pr():

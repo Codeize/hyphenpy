@@ -81,14 +81,14 @@ class Channels(commands.Cog):
             ctx.guild.default_role: discord.PermissionOverwrite(send_messages=False)
             }
             await channel.edit(overwrites=overwrites)
-            embed = discord.Embed(title="Channel Locked!", description=f"{channel.name} has been locked by {ctx.message.author.mention}! Hang in there!", color=ctx.author.color)
+            embed = discord.Embed(title="Channel Locked! [Unlock with -lock.]", description=f"{channel.name} has been locked by {ctx.message.author.mention}! Hang in there!", color=ctx.author.color)
             embed.set_footer(text="Channel on lockdown. | Only users with administrator permissions may send messages.")
             await ctx.send(embed=embed)
-        elif channel.overwrites[ctx.guild.default_role].send_messages == False or channel.overwrites[ctx.guild.default_role].send_messages == None:
+        elif channel.overwrites[ctx.guild.default_role].send_messages == True or channel.overwrites[ctx.guild.default_role].send_messages == None:
             overwrites = channel.overwrites[ctx.guild.default_role]
             overwrites.send_messages = False
             await channel.set_permissions(ctx.guild.default_role, overwrite=overwrites)
-            embed = discord.Embed(title="Channel Locked!", description=f"{channel.name} has been locked by {ctx.message.author.mention}! Hang in there!", color=ctx.author.color)
+            embed = discord.Embed(title="Channel Locked! [Unlock with -lock.]", description=f"{channel.name} has been locked by {ctx.message.author.mention}! Hang in there!", color=ctx.author.color)
             embed.set_footer(text="Channel on lockdown. | Only users with administrator permissions may send messages.")
             await ctx.send(embed=embed)
         else:
