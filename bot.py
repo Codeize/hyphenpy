@@ -17,6 +17,7 @@ import contextlib
 from traceback import format_exception
 from utils.util import clean_code, Pag
 import traceback
+from AntiSpam import AntiSpamHandler
 
 # DB
 from utils.mongo import Document
@@ -110,6 +111,7 @@ async def get_prefix(client, message):
 intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997, intents=intents)
+client.handler = AntiSpamHandler(client, 1, ban_threshold=10, kick_threshold=5, message_interval=15000, ignore_bots=False, guild_warn_message=warn_embed_dict, guild_kick_message=guild_kick_embed_dict, guild_ban_message=guild_ban_embed_dict, user_kick_message=user_kick_embed_dict, user_ban_message=user_ban_embed_dict)
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)
@@ -267,6 +269,7 @@ async def on_command_error(ctx, error):
 async def on_message(message):
     if message.author.id == client.user.id:
         return
+    client.handler.propagate(message)
     await client.process_commands(message)
 
 async def ch_pr():
