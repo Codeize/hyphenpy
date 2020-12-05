@@ -69,7 +69,7 @@ class Channels(commands.Cog):
         await channel.delete(reason=reason)
         await ctx.send(f"Hey! {channel.name} was deleted!")
 
-    @commands.command()
+    @commands.command(name="Lock", description="Locks the channel cmd was executed in. Making it read only.")
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)

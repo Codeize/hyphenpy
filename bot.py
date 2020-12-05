@@ -17,7 +17,7 @@ import contextlib
 from traceback import format_exception
 from utils.util import clean_code, Pag
 import traceback
-from AntiSpam import AntiSpamHandler
+
 
 # DB
 from utils.mongo import Document
@@ -111,7 +111,7 @@ async def get_prefix(client, message):
 intents = discord.Intents.all()
 secret_file = json.load(open(cwd+'/bot_config/secrets.json'))
 client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_id=668423998777982997, intents=intents)
-client.handler = AntiSpamHandler(client, 1, ban_threshold=10, kick_threshold=5, message_interval=15000, ignore_bots=False, guild_warn_message=warn_embed_dict, guild_kick_message=guild_kick_embed_dict, guild_ban_message=guild_ban_embed_dict, user_kick_message=user_kick_embed_dict, user_ban_message=user_ban_embed_dict)
+
 client.config_token = secret_file['token']
 client.connection_url = secret_file["mongo"]
 logging.basicConfig(level=logging.INFO)
@@ -120,18 +120,18 @@ client.joke_api_key = secret_file["x-rapidapi-key"]
 client.cwd = cwd
 client.muted_users = {}
 
-@client.command()
+@client.command(name="load", description="[BOT DEV ONLY!] Load cog.")
 async def load(ctx, extension):
     client.load_extension(f"cogs.{extension}")
 
-@client.command()
+@client.command(name="unload", description="[BOT DEV ONLY!] Unload cog.")
 async def unload(ctx, extension):
     client.unload_extension(f"cogs.{extension}")
 
 
 @client.command(
     name="reload",
-    description="Reload all/one of the bots cogs!",
+    description="[BOT DEV ONLY!] Reload all/one of the bots cogs!",
     usage="[cog]",
     )
 @commands.is_owner()
@@ -188,7 +188,7 @@ async def reload(ctx, cog=None):
             await asyncio.sleep(0.5)
         await ctx.send(embed=embed)
 
-@client.command(name="eval", aliases=["exec"])
+@client.command(name="eval", description="[BOT DEV ONLY!] Evaluate given code.", aliases=["exec"])
 @commands.is_owner()
 async def _eval(ctx, *, code):
     """
@@ -259,17 +259,12 @@ async def on_ready():
 
     print(client.muted_users)
 
-@client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        embed = discord.Embed(title="Error!", description="Error 422 - Unprocessable Input (commands.MissingRequiredArgument).", color=0xff0000)
-        await ctx.send(embed=embed) 
+
 
 @client.event
 async def on_message(message):
     if message.author.id == client.user.id:
         return
-    client.handler.propagate(message)
     await client.process_commands(message)
 
 async def ch_pr():

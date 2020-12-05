@@ -49,13 +49,5 @@ class Botdev(commands.Cog):
         #await ctx.send(embed=embed)#
         #await ctx.send("THIS IS A DEVELOPMENT BUILD OF HYPHEN!\nALL FEATURES MAY NOT PERFORM AS INTENDED!")
 
-    @commands.command()
-    @commands.is_owner()
-    async def fv(self, ctx):
-        channel = self.client.get_channel(775440643307733052)
-        
-        embed = discord.Embed(title="Verify Below!", description="Hey! Welcome to the server! For verification, security and raid prevention purposes, we have a *tiny*, *tiny*  little verification system in place, all you gotta do is react to this message to gain access to the rest of the server. (Easy, Right?). Make sure to read the <#764489837851050014>.If you're having problems please DM one of the <@&764516812225904641>.\nEnjoy your stay :)", color=0x42cef5)
-        await channel.send(embed=embed)
-
 def setup(client):
     client.add_cog(Botdev(client))
