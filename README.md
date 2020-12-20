@@ -1,4 +1,4 @@
 # hyphen
-**Please Note:** Hyphen is now public while I work on the rebooted/better version. This is expected to be finished by early 2021. Thanks.
 
-Hyphen is a multifunctional Discord bot solely developed and maintained by Codeize#0001.
+
+**Hi! This is the archived version of Hyphen. This version is deprecated and will no longer be updated. Instead I'm working on an updated version.**
