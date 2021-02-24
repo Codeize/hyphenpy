@@ -35,7 +35,21 @@ class Botdev(commands.Cog):
     #   if ctx.message.author.id == user.id:
     #       await ctx.send("Really? You cannot blacklist yourself stoopid!")
     #       return
-    
+    commands.command(name="toggle", description="Enable or disable a command!")
+    @commands.is_owner()
+    async def toggle(self, ctx, *, command):
+        command = self.client.get_command(command)
+
+        if command is None:
+            await ctx.send("I can't find a command with that name!")
+
+        elif ctx.command == command:
+            await ctx.send("You cannot disable this command.")
+
+        else:
+            command.enabled = not command.enabled
+            ternary = "enabled" if command.enabled else "disabled"
+            await ctx.send(f"Command: __{command.qualified_name}__ is now ***{ternary}***!")
 
 
 #@commands.command(name="Blacklist", description="(Bot Developer Only!) Blacklists the specified user.")
