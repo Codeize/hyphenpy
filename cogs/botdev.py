@@ -1,5 +1,6 @@
 # Standard Libraries
 import json
+import os
 import io
 import re
 
@@ -12,6 +13,7 @@ from dbfn import reactionbook
 import textwrap
 import traceback
 import contextlib
+import asyncio
 
 class Botdev(commands.Cog):
 
