@@ -1,11 +1,9 @@
-# Requires pip install buttons
 from discord.ext import commands
-
-from utils.util import Pag
+from dbfn import reactionbook
 
 class Help(commands.Cog, name="Help command"):
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, client):
+        self.client = client
         self.cmds_per_page = 5
 
     def get_command_signature(self, command: commands.Command, ctx: commands.Context):
@@ -39,8 +37,8 @@ class Help(commands.Cog, name="Help command"):
         return sorted(commandList, key=lambda x: x.name)
 
     async def setup_help_pag(self, ctx, entity=None, title=None):
-        entity = entity or self.bot
-        title = title or self.bot.description
+        entity = entity or self.client
+        title = title or self.client.description
 
         pages = []
 
@@ -71,7 +69,9 @@ class Help(commands.Cog, name="Help command"):
                 )
             pages.append(commands_entry)
 
-        await Pag(title=title, color=0xCE2029, entries=pages, length=1).start(ctx)
+        book = reactionbook(self.client, ctx, TITLE=title)
+        book.createpages(pages, ITEM_PER_PAGE=True)
+        await book.createbook(MODE="numbers", COLOUR=0xCE2029, TIMEOUT=180)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -85,12 +85,12 @@ class Help(commands.Cog, name="Help command"):
             await self.setup_help_pag(ctx)
 
         else:
-            cog = self.bot.get_cog(entity)
+            cog = self.client.get_cog(entity)
             if cog:
                 await self.setup_help_pag(ctx, cog, f"{cog.qualified_name}'s commands")
 
             else:
-                command = self.bot.get_command(entity)
+                command = self.client.get_command(entity)
                 if command:
                     await self.setup_help_pag(ctx, command, command.name)
 
@@ -98,5 +98,5 @@ class Help(commands.Cog, name="Help command"):
                     await ctx.send("Entity not found.")
 
 
-def setup(bot):
-    bot.add_cog(Help(bot))
+def setup(client):
+    client.add_cog(Help(client))

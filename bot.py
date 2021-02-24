@@ -9,7 +9,6 @@ import discord
 from discord.ext import commands
 import asyncio
 import logging
-import motor.motor_asyncio
 
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
@@ -51,27 +50,16 @@ client.statuses = [f"over {len(client.guilds)} servers for FREE [-invite]! | -he
 @client.event
 async def on_ready():
     print("Hyphen is online and active.")
-    print(f"Connected to {client.guilds} servers")
+    print(f"Connected to {len(client.guilds)} servers")
 
-    client.mongo = motor.motor_asyncio.AsyncIOMotorClient(str(client.connection_url))
-    client.db = client.mongo["hyphen"]
     # No database stuff here no more
-    print("Initialized Database")
-    
-    for document in await client.config.get_all():
-        print(document)
-
-    currentMutes = await client.mutes.get_all()
-    for mute in currentMutes:
-        client.muted_users[mute["_id"]] = mute
-
-    print(client.muted_users)
+    # Or mutes or the other thing
 
 @client.event
 async def on_message(message):
     if message.author.id == client.user.id:
         return
-    if messages.author.bot:
+    if message.author.bot:
         return
     await client.process_commands(message)
 
