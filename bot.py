@@ -49,7 +49,7 @@ client.statuses = [f"over {len(client.guilds)} servers for FREE [-invite]! | -he
 
 @client.event
 async def on_ready():
-    print("Hyphen is online and active.")
+    print("Watchdog is online and active.")
     print(f"Connected to {len(client.guilds)} servers")
 
     # No database stuff here no more

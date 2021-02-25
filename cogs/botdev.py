@@ -24,7 +24,7 @@ class Botdev(commands.Cog):
     async def on_ready(self):
         print(f"\n__COGS__\n{self.__class__.__name__} has been loaded\n-----")
 
-    @commands.command(name="Shutdown", description="(Bot Developer Only!) Terminates Hyphens current session.")
+    @commands.command(name="Shutdown", description="(Bot Developer Only!) Terminates Watchdogs current session.")
     @commands.is_owner()
     async def shutdown(self, ctx):
         embed = discord.Embed(title="Logged Out!", description="Ok. Process successfully voided. - (Code 0)", color=0x12e612)
@@ -83,7 +83,7 @@ class Botdev(commands.Cog):
     #async def dev(self, ctx):
     #   embed = discord.Embed(title="Entered Dev Mode!", description=(f"Port : **8080** Version : **0.0.3**."), color=0x31e30e)
     #   await ctx.send(embed=embed)
-    #   await ctx.send("THIS IS A DEVELOPMENT BUILD OF HYPHEN!\nALL FEATURES MAY NOT PERFORM AS INTENDED!")
+    #   await ctx.send("THIS IS A DEVELOPMENT BUILD OF WATCHDOG!\nALL FEATURES MAY NOT PERFORM AS INTENDED!")
 
 
     @commands.command(name="load", description="[BOT DEV ONLY!] Load cog.")
