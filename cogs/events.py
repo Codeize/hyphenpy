@@ -13,21 +13,7 @@ class Events(commands.Cog):
 
         @commands.Cog.listener()
         async def on_ready(self):
-            print("Events Cog has been loaded\n-----")
-
-        @commands.Cog.listener()
-        async def on_member_join(self, member):
-            # On member joins we find a channel called general and if it exists,
-            # send an embed welcoming them to our guild
-            channel = discord.utils.get(member.guild.text_channels, name='welcome' or '👋-welcome')
-            if channel:
-                embed = discord.Embed(description='Welcome to our guild!', color=0x31e30e)
-                embed.set_thumbnail(url=member.avatar_url)
-                embed.set_author(name=member.name, icon_url=member.avatar_url)
-                embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
-                embed.timestamp = datetime.datetime.utcnow()
-
-                await channel.send(embed=embed)
+            print("Events has been loaded\n-----")
 
         @commands.Cog.listener()
         async def on_member_remove(self, member):

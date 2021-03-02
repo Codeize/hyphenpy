@@ -2,3 +2,7 @@ __pycache__
 __pycache__
 secrets.json
 *.pyc
+bank.json
+wd.sqbpro
+wd.sqlite
+.idea/*

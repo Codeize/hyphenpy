@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import random
 import json
+import sqlite3
 
 # Third Party Libraries
 import discord
@@ -12,31 +13,17 @@ import logging
 
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
-print(f"{cwd}\n-----")
-
-async def get_prefix(client, message):
-    if not message.guild:
-        return commands.when_mentioned_or("-")(client, message)
-
-    try:
-        data = await client.config.find(message.guild.id)
-
-        # Make sure we have a useable prefix
-        if not data or "prefix" not in data:
-            return commands.when_mentioned_or("-")(client, message)
-        return commands.when_mentioned_or(data["prefix"])(client, message)
-    except:
-        return commands.when_mentioned_or("-")(client, message)
+print(f"-----\n{cwd}\n-----")
 
 with open(cwd + "/bot_config/secrets.json") as secret_file:
     secret_file = json.load(secret_file)
 
 owners = [668423998777982997, 671791003065384987]
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix = get_prefix, case_insensitive=True, help_command=None, owner_ids=owners, intents=intents)
+client = commands.Bot(command_prefix = "wd-", case_insensitive=True, help_command=None, owner_ids=owners, intents=intents)
 
 client.config_token = secret_file["token"]
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 # Client Vars
 client.cwd = cwd
@@ -45,12 +32,27 @@ client.muted_users = {}
 client.e_colour = 0xff0000
 client.s_colour = 0x31e30e
 
-client.statuses = [f"over {len(client.guilds)} servers for FREE [-invite]! | -help"]
+client.statuses = [f"over {len(client.guilds)} servers for FREE [wd-invite]! | wd-help"]
 
 @client.event
 async def on_ready():
-    print("Watchdog is online and active.")
-    print(f"Connected to {len(client.guilds)} servers")
+    db = sqlite3.connect('wd.sqlite')
+    cursor = db.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS main(
+        guild_id TEXT,
+        message TEXT,
+        channel_id TEXT
+        )
+    ''')
+    print("__MAIN INFO__\n-----\nWatchdog is online and active. --- (https://watchdog.tk)\nDeveloped by https://codeize.dev/\n*(C) Codeize 2021 ALL RIGHTS RESERVED*\n-----\n")
+    print(f"__SERVERS__\n-----\nConnected to {len(client.guilds)} servers\n-----")
+    print('Servers connected to:\n-----')
+    for guild in client.guilds:
+        try:
+            print(f"{guild.name} \n-----")
+        except UnicodeEncodeError:
+            print("Guild name contains unicode that isn't supported. Skippiing...\n-----")
 
     # No database stuff here no more
     # Or mutes or the other thing
@@ -61,6 +63,7 @@ async def on_message(message):
         return
     if message.author.bot:
         return
+        
     await client.process_commands(message)
 
 async def ch_pr():

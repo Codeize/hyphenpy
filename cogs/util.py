@@ -20,16 +20,6 @@ class Util(commands.Cog):
         embed = discord.Embed(title="Pong!", description=(("You requested sir, : Pong! {0}ms").format(round(self.client.latency * 1000))), color=0x12e612)
         await ctx.send(embed=embed)
 
-    @commands.command(name="Updates", description="Keep up to date with Watchdog.")
-    async def updates(self, ctx):
-        embed = discord.Embed(title="Watchdog Updates!", color=0x12e612)
-        embed.add_field(name="Under Development :", value="Permission Checks, Setup, More Moderation Commands. Reason for shutdown cmd")
-        embed.add_field(name="Coming Soon :", value="Music, Economy.")
-
-        embed.set_footer(text=f"Developed By Codeize#0001  | {self.client.user.name}")
-        embed.set_author(name=self.client.user.name, icon_url=self.client.user.avatar_url)
-        await ctx.send(embed=embed)
-
     @commands.command(name="stats", description="Shows stats about Watchdog")
     async def stats(self, ctx):
         serverCount = len(self.client.guilds)
@@ -63,7 +53,7 @@ class Util(commands.Cog):
 
     @commands.command(name="Invite", description="Invite Watchdog to your servers!")
     async def invite(self, ctx):
-        embed = discord.Embed(title="Wanna get Watchdog in your server?", description="Here is the link to [add Watchdog](https://discord.com/api/oauth2/authorize?client_id=745622142657364040&permissions=8&scope=bot)!", colour=ctx.author.colour)
+        embed = discord.Embed(title="Wanna get Watchdog in your server?", description="Here is the link to [add Watchdog](https://discord.com/api/oauth2/authorize?client_id=812031878881345607&permissions=8&scope=bot)!", colour=ctx.author.colour)
         await ctx.send(embed=embed)
 
     @commands.command(name="Support", description="Invite to the support server.")
@@ -78,25 +68,18 @@ class Util(commands.Cog):
         embed = discord.Embed(title="Prefix Changed!", description=(f"The guild prefix has been set to `{prefix}`. Use `{prefix}prefix [prefix]` to change it again!"), colour=ctx.author.colour)
         await ctx.send(embed=embed)
 
-    @commands.command(name="deleteprefix", aliases=["dp"], description="Delete your guilds prefix!")
-    @commands.guild_only()
-    @commands.has_guild_permissions(administrator=True)
-    async def deleteprefix(self, ctx):
-        await self.client.config.unset({"_id": ctx.guild.id, "prefix": 1})
-        embed = discord.Embed(title="Prefix Erased!", description="This guilds prefix has been set back to the default! The default prefix is `-`", colour=ctx.author.colour)
-        await ctx.send(embed=embed)
-
     @commands.command(name="credits", description="Many thanks to these users!")
     async def credits(self, ctx):
         embed = discord.Embed(title="The Credits!", description="**Huge** thanks to these users, Watchdog wouldn't have these features without your help!", colour=ctx.author.colour)
-        embed.add_field(name="Its not an Apple#6103", value="Thanks for helping with the sharding process!")
+        embed.add_field(name="Its not an Apple#6103", value="Thanks for helping with the sharding process, when I need to add it that is!")
         embed.add_field(name="3vil#0001", value="Thanks for all the advice when I was getting started, and even now!")
         embed.add_field(name="Cookie_#7907", value="Thanks for a lot of development help, but mainly testing and feedback!")
         embed.add_field(name="Goose_#2548", value="Thanks for helping with technical issues!")
         embed.add_field(name="Extinct#1607", value="Thanks for all the support and enthusiasm during the early versions of Watchdog!")
         embed.add_field(name="Reiterpallasch#2732", value="Thanks for testing the early versions of Watchdog!")
-        embed.add_field(name="tpyhr#3765", value="Thanks for giving feedback and promoting Watchdog!")
+        embed.add_field(name="Trung#3765", value="Thanks for giving feedback and promoting Watchdog!")
         embed.add_field(name="Skelmis#9135", value="Thanks for all the support, tips, and advice for Watchdog! But, most importantly, thanks for helping with the AntiSpam module!")
+        embed.add_field(name="justjude#2296", value="Thanks for fixing some commands, and giving some great advice")
         await ctx.send(embed=embed)
 
     @commands.command(name="privacy", description="Shows Watchdogs Legal Policy.")

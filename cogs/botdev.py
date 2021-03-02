@@ -22,7 +22,7 @@ class Botdev(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"\n__COGS__\n{self.__class__.__name__} has been loaded\n-----")
+        print(f"\n__COGS__\n-----\n{self.__class__.__name__} has been loaded\n-----")
 
     @commands.command(name="Shutdown", description="(Bot Developer Only!) Terminates Watchdogs current session.")
     @commands.is_owner()
@@ -164,10 +164,11 @@ class Botdev(commands.Cog):
         """
         code = clean_code(code)
 
-        channel = ctx.channel,
+        channel = ctx.channel
         author = ctx.author
         guild = ctx.guild
         message = ctx.message
+        ctx = ctx
 
         book = reactionbook(self.client, ctx, TITLE="Eval")
         

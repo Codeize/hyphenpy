@@ -75,7 +75,7 @@ class Help(commands.Cog, name="Help command"):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"{self.__class__.__name__} cog has been loaded\n-----")
+        print(f"{self.__class__.__name__} has been loaded\n-----")
 
     @commands.command(
         name="help", aliases=["h", "commands"], description="The help command!"
