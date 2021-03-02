@@ -11,6 +11,9 @@ from discord.ext import commands
 import asyncio
 import logging
 
+# Proj Modules
+from database import db
+
 cwd = Path(__file__).parents[0]
 cwd = str(cwd)
 print(f"-----\n{cwd}\n-----")
@@ -33,6 +36,8 @@ client.e_colour = 0xff0000
 client.s_colour = 0x31e30e
 
 client.statuses = [f"over {len(client.guilds)} servers for FREE [wd-invite]! | wd-help"]
+
+db()
 
 @client.event
 async def on_ready():
